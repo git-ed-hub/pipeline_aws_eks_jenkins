@@ -9,7 +9,6 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         EKS_CLUSTER = "my-eks"
         AWS_REGION = "us-east-1"
-
     }
     stages{
         stage("Cleanup Workspace"){
@@ -17,13 +16,11 @@ pipeline {
                 cleanWs()
                 }
         }
-
         stage("Checkout from SCM"){
                 steps {
                     git branch: 'main', credentialsId: 'github', url: 'https://github.com/git-ed-hub/pipeline_aws_eks_jenkins.git'
                 }
         }
-
         stage("Build & Push Docker Image") {
             steps {
                 script {
@@ -39,7 +36,6 @@ pipeline {
             }
 
        }
-
        stage ('Cleanup Artifacts') {
            steps {
                script {
@@ -58,7 +54,6 @@ pipeline {
                 }
             }
         }
-
         stage('Get Service URL') {
             steps {
                 script {
@@ -79,7 +74,6 @@ pipeline {
                 }
             }
         }
-       
       
     }
 }
