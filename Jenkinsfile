@@ -65,11 +65,13 @@ pipeline {
                     def serviceUrl = ""
                     // Wait for the LoadBalancer IP to be assigned
                     timeout(time: 5, unit: 'MINUTES') {
-                        while(serviceUrl == "") {
-                            serviceUrl = sh(script: "kubectl get svc nginx-game-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
-                            if(serviceUrl == "") {
-                                echo "Waiting for the LoadBalancer IP..."
-                                sleep 10
+                        script {
+                            while (serviceUrl == "") {
+                                serviceUrl = sh(script: "kubectl get svc nginx-game-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+                                if (serviceUrl == "") {
+                                    echo "Waiting for the LoadBalancer IP..."
+                                    sleep 10
+                                }
                             }
                         }
                     }
