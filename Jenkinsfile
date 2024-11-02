@@ -51,7 +51,7 @@ pipeline {
        stage('K8S Deploy') {
             steps {
                 script {
-                    withAWS(credentials: 'AWS-CREDS', region: 'us-east-1') {
+                    withAWS(credentials: 'AWS-CREDS', region: "${AWS_REGION}") {
                         sh "aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}"
                         sh 'kubectl apply -f EKS-deployment.yaml'
                     }
@@ -66,7 +66,7 @@ pipeline {
                     // Wait for the LoadBalancer IP to be assigned
                     timeout(time: 5, unit: 'MINUTES') {
                         while(serviceUrl == "") {
-                            serviceUrl = sh(script: "kubectl get svc word-counter-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+                            serviceUrl = sh(script: "kubectl get svc nginx-game-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
                             if(serviceUrl == "") {
                                 echo "Waiting for the LoadBalancer IP..."
                                 sleep 10
