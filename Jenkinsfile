@@ -63,19 +63,23 @@ pipeline {
             steps {
                 script {
                     def serviceUrl = ""
-                    // Wait for the LoadBalancer IP to be assigned
-                    timeout(time: 5, unit: 'MINUTES') {
-                        script {
-                            while (serviceUrl == "") {
-                                serviceUrl = sh(script: "kubectl get svc nginx-game-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
-                                if (serviceUrl == "") {
-                                    echo "Waiting for the LoadBalancer IP..."
-                                    sleep 10
-                                }
-                            }
+                    def maxAttempts = 5
+                    // Intentos para obtener la URL del LoadBalancer
+                    for (int i = 0; i < maxAttempts; i++) {
+                        serviceUrl = sh(script: "kubectl get svc nginx-game-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'", returnStdout: true).trim()
+                        if (serviceUrl) {
+                            echo "Service URL: http://${serviceUrl}"
+                            break
+                        } else {
+                            echo "Attempt ${i + 1} of ${maxAttempts}: Waiting for the LoadBalancer IP..."
+                            sleep 60
                         }
                     }
-                    echo "Service URL: http://${serviceUrl}"
+                    // Verificar si se obtuvo la URL o si se alcanzaron los intentos máximos
+                    if (!serviceUrl) {
+                        error "Failed to get the LoadBalancer IP after ${maxAttempts} attempts."
+                    }
+                    
                 }
             }
         }
