@@ -2,13 +2,13 @@ pipeline {
     agent any
     environment {
 	    APP_NAME = "nginx-game"
-            RELEASE = "1.0.0"
-            DOCKER_USER = "testsysadmin8"
-            DOCKER_PASS = 'dockerhub'
-            IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-            IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
-            EKS-CLUSTER = "my-eks"
-            AWS-REGION = "us-east-1"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "testsysadmin8"
+        DOCKER_PASS = 'dockerhub'
+        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+        EKS_CLUSTER = "my-eks"
+        AWS_REGION = "us-east-1"
 
     }
     stages{
@@ -58,8 +58,8 @@ pipeline {
        stage('K8S Deploy') {
             steps {
                 script {
-                    withAWS(credentials: 'AWS-CREDS', region: 'AWS-REGION') {
-                        sh 'aws eks update-kubeconfig --name ${EKS-CLUSTER} --region ${AWS-REGION}'
+                    withAWS(credentials: 'AWS-CREDS', region: 'AWS_REGION') {
+                        sh 'aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}'
                         sh 'kubectl apply -f EKS-deployment.yaml'
                     }
                 }
