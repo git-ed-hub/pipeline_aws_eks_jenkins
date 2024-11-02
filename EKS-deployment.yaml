@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: nginx-game-container
-        image: testsysadmin8/nginx-game::latest
+        image: testsysadmin8/nginx-game:latest
         ports:
         - containerPort: 80
 
