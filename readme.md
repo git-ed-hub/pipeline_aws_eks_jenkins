@@ -15,7 +15,7 @@ Esta guia esta diseñada para ver la interaccion entre aplicaciones que permitan
             - aws credencials (AWS Access Key ID and Secret Access Key).
         Kubectl
 
-## Pasos del pipeline.
+## Pasos del pipeline:
 
     Descarga el repositorio de github.
     Creamos la imagen con el archivo Dockerfile

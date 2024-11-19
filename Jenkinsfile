@@ -9,6 +9,7 @@ pipeline {
         IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
         EKS_CLUSTER = "my-eks"
         AWS_REGION = "us-east-1"
+        REPO = 'https://github.com/git-ed-hub/pipeline_aws_eks_jenkins.git'
     }
     stages{
         stage("Cleanup Workspace"){
@@ -18,7 +19,7 @@ pipeline {
         }
         stage("Checkout from SCM"){
                 steps {
-                    git branch: 'main', credentialsId: 'github', url: 'https://github.com/git-ed-hub/pipeline_aws_eks_jenkins.git'
+                    git branch: 'main', credentialsId: 'github', url: REPO
                 }
         }
         stage("Build & Push Docker Image") {
@@ -34,7 +35,6 @@ pipeline {
                     }
                 }
             }
-
        }
        stage ('Cleanup Artifacts') {
            steps {
@@ -49,7 +49,7 @@ pipeline {
                 script {
                     withAWS(credentials: 'AWS-CREDS', region: "${AWS_REGION}") {
                         sh "aws eks update-kubeconfig --name ${EKS_CLUSTER} --region ${AWS_REGION}"
-                        sh 'kubectl apply -f EKS-deployment.yaml'
+                        sh 'kubectl apply -f deployment_eks.yaml'
                     }
                 }
             }
